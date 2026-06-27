@@ -33,14 +33,22 @@ public class AbsenceScheduler {
     }
 
     /**
-     * Runs every weekday at 9:00 AM.
+     * Runs every weekday according to the configured cron (default 9:00 AM).
+     * To change the time, set the ABSENCE_CHECK_CRON environment variable on Railway,
+     * or edit 'edutrack.school.absence-check-cron' in application.yml.
+     *
+     * Cron format examples:
+     *   7:00 AM  →  0 0 7 * * MON-FRI
+     *   7:30 AM  →  0 30 7 * * MON-FRI
+     *   8:00 AM  →  0 0 8 * * MON-FRI
+     *
      * Skips weekends and special holidays automatically via CalendarService.
      *
      * For every active student with no arrival scan today, this:
      *   1. Creates an ABSENT AttendanceRecord (so it shows in the dashboard)
      *   2. Sends an absence email to the parent
      */
-    @Scheduled(cron = "0 0 9 * * MON-FRI")
+    @Scheduled(cron = "${edutrack.school.absence-check-cron:0 0 9 * * MON-FRI}")
     public void notifyAbsentStudents() {
         LocalDate today = LocalDate.now();
 
